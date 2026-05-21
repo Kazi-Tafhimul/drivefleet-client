@@ -11,6 +11,8 @@ const AddCarPage = () => {
     
     const carData = Object.fromEntries(formData.entries());
     console.log(carData);
+    carData.dailyRentPrice = Number(carData.dailyRentPrice);
+    carData.seatCapacity = Number(carData.seatCapacity);
    const res = await fetch("http://localhost:5000/car", {
         method:'POST',
         headers:{
@@ -19,34 +21,15 @@ const AddCarPage = () => {
         body: JSON.stringify(carData)
     })
     const data = await res.json();
+    if(res){
+        toast.success("Car successfully added.")
+        e.target.reset();
+    }
+    
     console.log(data);
     
     
-    // carData.availability = "available";
-    // carData.bookingCount = 0;
-    // carData.ownerEmail = "user@example.com"; 
-    // carData.createdAt = new Date().toISOString();
-
-    // try {
-    //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cars`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(carData),
-    //   });
-
-    //   const data = await res.json();
-
-    //   if (res.ok) {
-    //     toast.success("Vehicle listed successfully in DriveFleet!");
-    //     e.currentTarget.reset(); 
-    //   } else {
-    //     throw new Error(data.message || "Failed to list the vehicle");
-    //   }
-    // } catch (error) {
-    //   toast.error(error.message);
-    // }
+   
   };
 
   return (
