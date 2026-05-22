@@ -1,3 +1,4 @@
+import BookingForm from '@/components/BookingForm';
 import { Button, Card } from '@heroui/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,15 +15,13 @@ const CarDetailsPage = async ({params}) => {
     const car = await res.json();
     console.log(car)
     return (
-        <div className="w-full bg-neutral-950 min-h-screen text-white py-12 px-4 md:px-12">
+       <div className="w-full bg-neutral-950 min-h-screen text-white py-12 px-4 md:px-12">
       <div className="max-w-6xl mx-auto space-y-8">
-        
         
         <Link href="/explore" className="inline-flex items-center gap-2 text-xs text-neutral-400 hover:text-orange-500 transition-colors uppercase tracking-wider font-semibold">
           <FaArrowLeft/> Back to Fleet Listings
         </Link>
 
-       
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
          
@@ -36,7 +35,7 @@ const CarDetailsPage = async ({params}) => {
             />
           </div>
 
-         
+          
           <div className="lg:col-span-5 space-y-6">
             <div className="space-y-2">
               <span className="text-[11px] font-bold text-orange-500 uppercase tracking-widest bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-md">
@@ -50,7 +49,6 @@ const CarDetailsPage = async ({params}) => {
               </p>
             </div>
 
-            
             <Card className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex flex-row justify-between items-center">
               <div>
                 <p className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Daily Rental Rate</p>
@@ -62,7 +60,6 @@ const CarDetailsPage = async ({params}) => {
               </div>
             </Card>
 
-           
             <div className="space-y-2.5">
               <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-400">Vehicle Profile & Specifications</h4>
               <p className="text-sm text-neutral-400 leading-relaxed font-light">
@@ -70,7 +67,6 @@ const CarDetailsPage = async ({params}) => {
               </p>
             </div>
 
-            
             <div className="flex items-center gap-4 text-xs font-semibold bg-neutral-900/50 border border-neutral-800/60 p-4 rounded-xl">
               <div className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${car.availability === "available" ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-red-500"}`} />
@@ -82,17 +78,20 @@ const CarDetailsPage = async ({params}) => {
               </div>
             </div>
 
-           
-            <Button 
-              disabled={car.availability !== "available"}
-              className={`w-full font-bold text-xs uppercase tracking-widest py-6 rounded-xl transition-all duration-300 shadow-lg ${
-                car.availability === "available" 
-                  ? "bg-orange-600 hover:bg-orange-700 text-white shadow-orange-950/20" 
-                  : "bg-neutral-800 text-neutral-600 cursor-not-allowed"
-              }`}
-            >
-              {car.availability === "available" ? "Initiate Booking Sequence" : "Vehicle Currently Reserved"}
-            </Button>
+            
+           {car.availability !== "unavailable" ? (
+            <BookingForm 
+                carId={car._id} 
+                carName={car.carName} 
+                dailyRentPrice={car.dailyRentPrice} 
+            />
+) : (
+            <div className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-500 font-bold uppercase tracking-widest py-4">
+                Vehicle Currently Reserved
+            </div>
+)}
+          
+
           </div>
 
         </div>
