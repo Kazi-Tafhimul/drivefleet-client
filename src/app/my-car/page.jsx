@@ -33,7 +33,7 @@ const MyCarsPage = async () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <Link href={`/my-cars/edit/${car._id}`} className="w-full">
+                <Link href={`/my-car/edit/${car._id}`} className="w-full">
                   <button className="w-full bg-neutral-800 border border-neutral-700 text-xs px-4 py-2 rounded-md hover:bg-neutral-700 font-semibold h-9">
                     Update Specs
                   </button>

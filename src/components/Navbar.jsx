@@ -46,7 +46,7 @@ const Navbar = () => {
         </li>
         <li>
             <Link
-            href="/my-car" 
+            href="/my-car"
             className="px-4 py-2 rounded-md text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
           >
             My Added Cars
