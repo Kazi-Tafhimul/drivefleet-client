@@ -13,6 +13,8 @@ const DeleteButton = ({_id, carName}) => {
         })
         if(res){
             toast.success("Vehicle permanently removed.");
+            router.refresh();
+
         }
         else{
             toast.error("Failed to delete.");
