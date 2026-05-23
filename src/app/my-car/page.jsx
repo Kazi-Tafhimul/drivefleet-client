@@ -1,10 +1,20 @@
 import DeleteButton from '@/components/DeleteButton';
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
 const MyCarsPage = async () => {
-    const loggedInUserEmail = "testuser@drivefleet.com";
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if(!session){
+        redirect("/login");
+    }
+    const loggedInUserEmail = session.user.email;
+    
     const res = await fetch(`http://localhost:5000/car?email=${loggedInUserEmail}`);
     const cars = await res.json();
 
