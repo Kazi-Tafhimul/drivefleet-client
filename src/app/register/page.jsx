@@ -1,8 +1,10 @@
 "use client";
+import { authClient } from '@/lib/auth-client';
 import { Button, Card, FieldError, Form, Input, Label, TextField } from '@heroui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { FaGoogle, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 
 const RegisterPage = () => {
@@ -16,28 +18,28 @@ const RegisterPage = () => {
         const email = formData.get("email");
         const photoUrl = formData.get("photoUrl");
         const password = formData.get("password");
-        try {
-      
-      
-            toast.success("Welcome back to DriveFleet!");
-            router.push("/"); 
-            router.refresh();
-           } 
-           catch (error) {
-             toast.error(error.message || "Invalid credentials. Authentication failed.");
-           }
-//         const handleGoogleSignIn = async () => {
-
-//             try {
-//               // Better Auth provider login logic link:
-//               // await authClient.signIn.social({ provider: "google" });
-//               toast.success("Welcome to DriveFleet!");
-//               router.push("/"); // Requirement: Redirect user to home route on success
-//             } catch (error) {
-//               toast.error("Google authentication failed.");
-//             }
-//   };
+        const {data, error} = await authClient.signUp.email({
+            email:email,
+            password:password,
+            name:name,
+            image:photoUrl
+        });
+        if (error) {
+            toast.error(error.message || "Registration failed.");
+            return;
+          
+  
+ 
+           
+        }
+    
+        toast.success("Account successfully created!");
+        router.push("/login");
   };
+
+        
+
+  
        
        
 
@@ -48,18 +50,13 @@ const RegisterPage = () => {
         <h1 className="text-2xl font-extrabold tracking-wider uppercase">
           CREATE AN <span className="text-orange-500">ACCOUNT</span>
         </h1>
-        <p className="text-xs text-neutral-400">
-          Join DriveFleet to deploy high-performance assets instantly from our cloud ecosystem.
-        </p>
       </div>
 
       <Card className="bg-neutral-900 border border-neutral-800 w-full max-w-md rounded-xl p-8 shadow-2xl">
-        
         <Form className="flex flex-col gap-4" onSubmit={handleRegisterSubmit}>
-          
           <TextField name="name" isRequired className="w-full">
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Full Name</Label>
-            <Input placeholder="Enter your full name" className="bg-neutral-950 text-white rounded-lg mt-1" />
+            <Input placeholder="Enter your name" className="bg-neutral-950 text-white rounded-lg mt-1" />
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
@@ -70,7 +67,7 @@ const RegisterPage = () => {
             className="w-full"
             validate={(value) => {
               if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
-                return "Please enter a valid email address format specifier";
+                return "Please enter a valid email address";
               }
               return null;
             }}
@@ -82,26 +79,19 @@ const RegisterPage = () => {
 
           <TextField name="photoUrl" type="url" isRequired className="w-full">
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Photo URL</Label>
-            <Input placeholder="https://example.com/avatar.jpg" className="bg-neutral-950 text-white rounded-lg mt-1" />
+            <Input placeholder="https://example.com/photo.jpg" className="bg-neutral-950 text-white rounded-lg mt-1" />
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          
           <TextField 
             name="password" 
             type="password" 
             isRequired 
             className="w-full"
             validate={(value) => {
-              if (value.length < 6) {
-                return "Length must be at least 6 characters";
-              }
-              if (!/[A-Z]/.test(value)) {
-                return "Must have an Uppercase letter in the password";
-              }
-              if (!/[a-z]/.test(value)) {
-                return "Must have a Lowercase letter in the password";
-              }
+              if (value.length < 6) return "Length must be at least 6 characters";
+              if (!/[A-Z]/.test(value)) return "Must have an Uppercase letter";
+              if (!/[a-z]/.test(value)) return "Must have a Lowercase letter";
               return null;
             }}
           >
@@ -117,19 +107,28 @@ const RegisterPage = () => {
 
         <div className="relative flex py-4 items-center">
           <div className="flex-grow border-t border-neutral-800"></div>
-          <span className="flex-shrink mx-4 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Or Connect Via</span>
+          <span className="flex-shrink mx-4 text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Or</span>
           <div className="flex-grow border-t border-neutral-800"></div>
         </div>
 
-        <Button onClick={handleRegisterSubmit} className="w-full bg-neutral-950 hover:bg-neutral-900 text-white border border-neutral-800 font-bold text-xs uppercase tracking-widest py-5 rounded-lg transition-colors h-11">
+        <Button 
+          onClick={async () => {
+             try {
+               await authClient.signIn.social({
+                 provider: "google",
+                 callbackURL: "/"
+               });
+             } catch (err) {
+               toast.error("Google authentication initialization failed.");
+             }
+  }}
+          className="w-full bg-neutral-950 hover:bg-neutral-900 text-white border border-neutral-800 font-bold text-xs uppercase tracking-widest py-5 rounded-lg transition-colors h-11"
+        >
           <FaGoogle className="text-orange-500 inline mr-1" /> Continue With Google
         </Button>
 
         <p className="text-xs text-neutral-500 text-center mt-6">
-          Already part of the fleet?{" "}
-          <Link href="/login" className="text-orange-500 hover:underline font-semibold">
-            Login here
-          </Link>
+          Already registered? <Link href="/login" className="text-orange-500 hover:underline font-semibold">Login here</Link>
         </p>
       </Card>
     </div>
