@@ -1,12 +1,22 @@
+import { auth } from '@/lib/auth';
 import { Card } from '@heroui/react';
+import { headers } from 'next/headers';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import React from 'react';
 import { BiCalendar, BiCommentDetail } from 'react-icons/bi';
 import { GiSteeringWheel } from 'react-icons/gi';
 import { TbCoinTaka } from 'react-icons/tb';
 
 const MyBookingsPage = async () => {
-    const loggedInUserEmail = "testuser@drivefleet.com";
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    if(!session){
+        redirect('/login')
+    }
+    const loggedInUserEmail = session.user.email;
+    
     const res = await fetch(`http://localhost:5000/my-bookings?email=${loggedInUserEmail}`);
     const bookings = await res.json();
     
