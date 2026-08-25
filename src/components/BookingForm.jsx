@@ -19,6 +19,11 @@ const BookingForm = ({ carId, carName, dailyRentPrice, userEmail }) => {
   const handleBookNow = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    if (!userEmail) {
+      toast.error("Please login to book this car!");
+      router.push("/login");
+      return;
+    }
 
     const bookingPayload = {
       carId: carId,

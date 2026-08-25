@@ -13,7 +13,6 @@ import {
 } from "@heroui/react";
 import toast from "react-hot-toast";
 
-
 const AddCarForm = ({ user }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +28,7 @@ const AddCarForm = ({ user }) => {
       headers: {
         "Content-type": "application/json",
       },
-      credentials:"include",
+      credentials: "include",
       body: JSON.stringify(carData),
     });
     const data = await res.json();

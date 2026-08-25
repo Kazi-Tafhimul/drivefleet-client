@@ -13,7 +13,6 @@ const PrivateRoute = ({ children }) => {
     }
   }, [session, isPending, router]);
 
- 
   if (isPending) {
     return (
       <div className="flex justify-center items-center h-screen bg-neutral-950">
