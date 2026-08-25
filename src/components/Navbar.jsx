@@ -20,7 +20,7 @@ const Navbar = () => {
     });
   };
 
-  // ড্রপডাউনের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ করার জন্য
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -39,7 +39,7 @@ const Navbar = () => {
         DRIVE<span className="text-orange-500">FLEET</span>
       </Link>
 
-      {/* Main Navigation Links */}
+     
       <ul className="text-white flex gap-2 items-center">
         <li>
           <Link
@@ -59,13 +59,13 @@ const Navbar = () => {
         </li>
       </ul>
 
-      {/* User Actions / Dropdown */}
+      
       <div className="flex items-center gap-4">
         {isPending ? (
           <div className="text-neutral-400 text-sm">Loading...</div>
         ) : session ? (
           <div className="relative" ref={dropdownRef}>
-            {/* User Profile Trigger Icon/Image */}
+         
             <button
               onClick={() => setIsDropdownOpen((prev) => !prev)}
               className="flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-full"
@@ -84,7 +84,7 @@ const Navbar = () => {
               )}
             </button>
 
-            {/* Dropdown Menu */}
+           
             {isDropdownOpen && (
               <div className="absolute right-0 mt-3 w-56 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl py-2 text-white">
                 <div className="px-4 py-2 border-b border-neutral-800 mb-1">

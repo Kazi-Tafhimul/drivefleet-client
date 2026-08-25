@@ -11,19 +11,28 @@ import {
   TextField,
   Select,
 } from "@heroui/react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 const AddCarForm = ({ user }) => {
+  const [carType, setCarType] = useState("Sedan");
+  const [availability, setAvailability] = useState("Available");
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const carData = Object.fromEntries(formData.entries());
+
     carData.dailyRentPrice = Number(carData.dailyRentPrice);
     carData.seatCapacity = Number(carData.seatCapacity);
+
+    carData.carType = String(carType);
+    carData.availability = String(availability);
     carData.ownerId = user?.id;
     carData.ownerEmail = user?.email;
-    carData.availability = carData.availability || "Available";
+
     console.log(carData);
+
     const res = await fetch("http://localhost:5000/car", {
       method: "POST",
       headers: {
@@ -32,13 +41,19 @@ const AddCarForm = ({ user }) => {
       credentials: "include",
       body: JSON.stringify(carData),
     });
+
     const data = await res.json();
-    if (res) {
+    if (res.ok) {
       toast.success("Car successfully added");
       e.target.reset();
+      setCarType("Sedan");
+      setAvailability("Available");
+    } else {
+      toast.error("Failed to add car");
     }
     console.log(data);
   };
+
   return (
     <Card className="bg-neutral-900 border border-neutral-800 w-full rounded-xl">
       <form onSubmit={onSubmit} className="p-8 md:p-10 space-y-8">
@@ -61,6 +76,8 @@ const AddCarForm = ({ user }) => {
               name="carType"
               isRequired
               className="w-full"
+              selectedKey={carType}
+              onSelectionChange={(selected) => setCarType(selected)}
               placeholder="Select vehicle type"
             >
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider mb-1">
@@ -111,12 +128,14 @@ const AddCarForm = ({ user }) => {
               </Select.Popover>
             </Select>
           </div>
+
           <div className="flex flex-col">
             <Select
               name="availability"
               isRequired
               className="w-full"
-              defaultSelectedKey="Available"
+              selectedKey={availability}
+              onSelectionChange={(selected) => setAvailability(selected)}
               placeholder="Select status"
             >
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider mb-1">
