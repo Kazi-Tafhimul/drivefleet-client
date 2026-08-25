@@ -22,11 +22,13 @@ const EditCarForm = ({car,id}) => {
     const res = await fetch(`http://localhost:5000/car/${id}`,{
         method:'PATCH',
         headers:{"content-type" : "application/json"},
+        credentials:"include",
         body:JSON.stringify(updatedData),
     });
     if(res){
         toast.success("Data updated successfully")
         router.push('/my-car');
+        router.refresh();
         
     }
     else{

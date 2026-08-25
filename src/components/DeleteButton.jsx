@@ -10,6 +10,7 @@ const DeleteButton = ({_id, carName}) => {
     const handleDelete = async () => {
         const res = await fetch(`http://localhost:5000/car/${_id}`, {
             method:"DELETE",
+            credentials:"include"
         })
         if(res){
             toast.success("Vehicle permanently removed.");

@@ -77,7 +77,7 @@ const RegisterPage = () => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          <TextField name="photoUrl" type="url" isRequired className="w-full">
+          <TextField name="photoUrl" type="url" className="w-full">
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">Photo URL</Label>
             <Input placeholder="https://example.com/photo.jpg" className="bg-neutral-950 text-white rounded-lg mt-1" />
             <FieldError className="text-xs text-red-500 mt-1" />
