@@ -10,18 +10,31 @@ import { GiSteeringWheel } from "react-icons/gi";
 import { TbCoinTaka } from "react-icons/tb";
 
 const MyBookingsPage = async () => {
+  const reqHeaders = await headers();
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: reqHeaders,
   });
+
   if (!session) {
     redirect("/login");
   }
+
   const loggedInUserEmail = session.user.email;
 
+ 
   const res = await fetch(
     `http://localhost:5000/my-bookings?email=${loggedInUserEmail}`,
+    {
+      headers: {
+        cookie: reqHeaders.get("cookie") || "",
+      },
+      cache: "no-store",
+    }
   );
-  const bookings = await res.json();
+
+  const data = await res.json();
+
+  const bookings = Array.isArray(data) ? data : [];
 
   return (
     <PrivateRoute>
@@ -86,7 +99,7 @@ const MyBookingsPage = async () => {
                     <div className="bg-neutral-950/60 border border-neutral-800/60 p-3.5 rounded-lg flex gap-2 items-start">
                       <BiCommentDetail className="text-neutral-500 shrink-0 text-sm mt-0.5" />
                       <p className="text-xs text-neutral-400 font-light italic leading-relaxed">
-                        {booking.specialNote}
+                        {booking.specialNote || "No notes provided"}
                       </p>
                     </div>
                   </div>
@@ -97,7 +110,7 @@ const MyBookingsPage = async () => {
                     </span>
                     <span className="text-xl font-black text-white flex items-center gap-0.5">
                       <TbCoinTaka className="text-2xl text-orange-500" />
-                      {booking.totalPrice.toLocaleString()}
+                      {booking.totalPrice?.toLocaleString() || 0}
                     </span>
                   </div>
                 </Card>

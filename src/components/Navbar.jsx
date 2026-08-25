@@ -81,7 +81,7 @@ const Navbar = () => {
     <div className="text-neutral-400 text-sm">Loading...</div>
   ) : session ? (
     <div className="flex items-center gap-3">
-      {/* ইউজার ছবি থাকলে দেখাবে, না থাকলে ডিফল্ট ফেসবুক স্টাইল Avatar আইকন দেখাবে */}
+   
      {session.user?.image ? (
   <img
     src={session.user.image}
