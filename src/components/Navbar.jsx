@@ -1,13 +1,16 @@
 "use client";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const Navbar = () => {
   const { data: session, isPending } = authClient.useSession();
   const [imageError, setImageError] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleLogout = async () => {
+    setIsDropdownOpen(false);
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
@@ -17,12 +20,26 @@ const Navbar = () => {
     });
   };
 
+  // ড্রপডাউনের বাইরে ক্লিক করলে ড্রপডাউন বন্ধ করার জন্য
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <nav className="bg-neutral-950 border-b border-neutral-900 p-5 flex justify-between items-center px-8">
+    <nav className="bg-neutral-950 border-b border-neutral-900 p-5 flex justify-between items-center px-8 relative z-50">
       <Link href="/" className="text-white text-2xl font-bold tracking-wider">
         DRIVE<span className="text-orange-500">FLEET</span>
       </Link>
 
+      {/* Main Navigation Links */}
       <ul className="text-white flex gap-2 items-center">
         <li>
           <Link
@@ -40,71 +57,77 @@ const Navbar = () => {
             Explore Cars
           </Link>
         </li>
-
-        {session && (
-          <>
-            <li>
-              <Link
-                href="/add-car"
-                className="px-4 py-2 rounded-md text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
-              >
-                Add Car
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/my-bookings"
-                className="px-4 py-2 rounded-md text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
-              >
-                My Bookings
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/my-car"
-                className="px-4 py-2 rounded-md text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
-              >
-                My Added Cars
-              </Link>
-            </li>
-          </>
-        )}
       </ul>
 
+      {/* User Actions / Dropdown */}
       <div className="flex items-center gap-4">
         {isPending ? (
           <div className="text-neutral-400 text-sm">Loading...</div>
         ) : session ? (
-          <div className="flex items-center gap-3">
-            {session.user?.image && !imageError ? (
-              <img
-                src={session.user.image}
-                alt={session.user.name || "User"}
-                className="w-9 h-9 rounded-full border border-orange-500 object-cover"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-400 hover:border-orange-500 transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+          <div className="relative" ref={dropdownRef}>
+            {/* User Profile Trigger Icon/Image */}
+            <button
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className="flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-full"
+            >
+              {session.user?.image && !imageError ? (
+                <img
+                  src={session.user.image}
+                  alt={session.user.name || "User"}
+                  className="w-10 h-10 rounded-full border border-orange-500 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-orange-600 text-white font-bold flex items-center justify-center border border-orange-500 cursor-pointer hover:bg-orange-700 transition-colors uppercase">
+                  {session.user?.name ? session.user.name[0] : "U"}
+                </div>
+              )}
+            </button>
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-3 w-56 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl py-2 text-white">
+                <div className="px-4 py-2 border-b border-neutral-800 mb-1">
+                  <p className="text-sm font-semibold text-white truncate">
+                    {session.user?.name || "User"}
+                  </p>
+                  <p className="text-xs text-neutral-400 truncate">
+                    {session.user?.email}
+                  </p>
+                </div>
+
+                <Link
+                  href="/add-car"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className="px-4 py-2.5 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 flex items-center gap-2 transition-colors"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                  Add Car
+                </Link>
+
+                <Link
+                  href="/my-bookings"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className="px-4 py-2.5 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 flex items-center gap-2 transition-colors"
+                >
+                  My Bookings
+                </Link>
+
+                <Link
+                  href="/my-car"
+                  onClick={() => setIsDropdownOpen(false)}
+                  className="px-4 py-2.5 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 flex items-center gap-2 transition-colors border-b border-neutral-800"
+                >
+                  My Added Cars
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-neutral-800 flex items-center gap-2 transition-colors mt-1"
+                >
+                  Logout
+                </button>
               </div>
             )}
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all"
-            >
-              Logout
-            </button>
           </div>
         ) : (
           <Link

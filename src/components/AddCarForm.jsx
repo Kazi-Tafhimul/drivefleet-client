@@ -22,6 +22,7 @@ const AddCarForm = ({ user }) => {
     carData.seatCapacity = Number(carData.seatCapacity);
     carData.ownerId = user?.id;
     carData.ownerEmail = user?.email;
+    carData.availability = carData.availability || "Available";
     console.log(carData);
     const res = await fetch("http://localhost:5000/car", {
       method: "POST",
@@ -105,6 +106,41 @@ const AddCarForm = ({ user }) => {
                     className="hover:bg-orange-600 rounded"
                   >
                     Luxury
+                  </ListBox.Item>
+                </ListBox>
+              </Select.Popover>
+            </Select>
+          </div>
+          <div className="flex flex-col">
+            <Select
+              name="availability"
+              isRequired
+              className="w-full"
+              defaultSelectedKey="Available"
+              placeholder="Select status"
+            >
+              <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider mb-1">
+                Availability Status
+              </Label>
+              <Select.Trigger className="bg-neutral-950 border border-neutral-800 text-white rounded-lg">
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover className="bg-neutral-900 border border-neutral-800 text-white">
+                <ListBox>
+                  <ListBox.Item
+                    id="Available"
+                    textValue="Available"
+                    className="hover:bg-orange-600 rounded"
+                  >
+                    Available
+                  </ListBox.Item>
+                  <ListBox.Item
+                    id="Unavailable"
+                    textValue="Unavailable"
+                    className="hover:bg-orange-600 rounded"
+                  >
+                    Unavailable
                   </ListBox.Item>
                 </ListBox>
               </Select.Popover>

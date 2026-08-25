@@ -14,7 +14,13 @@ import React from "react";
 import toast from "react-hot-toast";
 import { GiCarKey } from "react-icons/gi";
 
-const BookingForm = ({ carId, carName, dailyRentPrice, userEmail }) => {
+const BookingForm = ({
+  carId,
+  carName,
+  dailyRentPrice,
+  userEmail,
+  availability,
+}) => {
   const router = useRouter();
 
   const handleBookNow = async (e) => {
@@ -30,7 +36,7 @@ const BookingForm = ({ carId, carName, dailyRentPrice, userEmail }) => {
       carId: carId,
       carName: carName,
       email: userEmail?.toLowerCase(),
-      userEmail:userEmail?.toLowerCase(),
+      userEmail: userEmail?.toLowerCase(),
       driverNeeded: formData.get("driverNeeded"),
       specialNote:
         formData.get("specialNote") || "No custom user notes appended.",
@@ -59,6 +65,16 @@ const BookingForm = ({ carId, carName, dailyRentPrice, userEmail }) => {
       toast.error("Network error. Please try again.");
     }
   };
+  if (availability === "Unavailable") {
+    return (
+      <Button
+        isDisabled
+        className="w-full bg-neutral-800 text-neutral-500 cursor-not-allowed font-bold text-xs uppercase tracking-widest py-6 rounded-xl border border-neutral-800"
+      >
+        Currently Unavailable
+      </Button>
+    );
+  }
 
   return (
     <Modal>
