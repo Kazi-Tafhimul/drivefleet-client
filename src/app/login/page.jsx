@@ -19,19 +19,26 @@ const LoginPage = () => {
         const password = formData.get("password");
         
         try {
-           
             const { data, error } = await authClient.signIn.email({ 
                 email, 
                 password 
             });
 
-            
             if (error) {
                 toast.error(error.message || "Invalid email or password.");
                 return;
             }
-      
-           
+
+            
+            await fetch("http://localhost:5000/jwt", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include", 
+                body: JSON.stringify({ email }),
+            });
+
             toast.success("Welcome back to DriveFleet!");
             router.push("/"); 
             router.refresh();
@@ -43,7 +50,6 @@ const LoginPage = () => {
 
     const handleGoogleSignIn = async () => {
         try {
-            
             await authClient.signIn.social({ 
                 provider: "google",
                 callbackURL: "/" 

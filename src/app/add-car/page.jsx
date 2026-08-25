@@ -1,4 +1,5 @@
 import AddCarForm from '@/components/AddCarForm';
+import PrivateRoute from '@/components/PrivateRoute';
 import { auth } from '@/lib/auth';
 
 import { headers } from 'next/headers';
@@ -15,6 +16,8 @@ const AddCarPage = async () => {
     }
 
     return (
+      <PrivateRoute>
+
        <div className="bg-neutral-900">
       <div className="p-6 bg-neutral-900 max-w-4xl mx-auto min-h-[85vh] flex flex-col justify-center items-center">
         <div className="w-full space-y-4 mb-6">
@@ -30,6 +33,7 @@ const AddCarPage = async () => {
         <AddCarForm user={session.user} />
       </div>
     </div>
+      </PrivateRoute>
     );
 };
 
