@@ -8,6 +8,7 @@ import {
   TextArea,
   TextField,
 } from "@heroui/react";
+
 import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
@@ -28,7 +29,8 @@ const BookingForm = ({ carId, carName, dailyRentPrice, userEmail }) => {
     const bookingPayload = {
       carId: carId,
       carName: carName,
-      email: userEmail,
+      email: userEmail?.toLowerCase(),
+      userEmail:userEmail?.toLowerCase(),
       driverNeeded: formData.get("driverNeeded"),
       specialNote:
         formData.get("specialNote") || "No custom user notes appended.",
