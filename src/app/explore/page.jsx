@@ -5,7 +5,10 @@ const ExploreCarsPage = async ({searchParams}) => {
     const search = resolvedParams?.search || "";
     const type = resolvedParams?.type || "All";
   
-    const res = await fetch(`http://localhost:5000/car?search=${search}&type=${type}`);
+   const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/car?search=${search}&type=${type}`,
+    { cache: "no-store" }
+  );
     const cars = await res.json();
 
   return (

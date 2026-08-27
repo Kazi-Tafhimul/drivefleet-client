@@ -1,5 +1,5 @@
 import DeleteButton from "@/components/DeleteButton";
-import PrivateRoute from "@/components/PrivateRoute";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Image from "next/image";
@@ -17,18 +17,15 @@ const MyCarsPage = async () => {
   const loggedInUserEmail = session.user.email;
 
   const res = await fetch(
-    `http://localhost:5000/car?email=${loggedInUserEmail}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/car?email=${loggedInUserEmail}`,
     {
-      headers: {
-        cookie: (await headers()).get("cookie") || "",
-      },
       cache: "no-store",
-    },
+    }
   );
   const cars = await res.json();
 
   return (
-    <PrivateRoute>
+    
       <div className="w-full bg-neutral-950 min-h-screen text-white p-8">
         <div className="max-w-5xl mx-auto space-y-6">
           <div>
@@ -82,7 +79,7 @@ const MyCarsPage = async () => {
           </div>
         </div>
       </div>
-    </PrivateRoute>
+    
   );
 };
 

@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 import { GiCarKey } from "react-icons/gi";
+import { authClient } from "@/lib/auth-client";
 
 const BookingForm = ({
   carId,
@@ -45,12 +46,20 @@ const BookingForm = ({
     };
 
     try {
-      const res = await fetch("http://localhost:5000/booking", {
+      const { data, error } = await authClient.token();
+
+      if (error || !data?.token) {
+        toast.error("Authentication token not found. Please login again.");
+        router.push("/login");
+        return;
+      }
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${data.token}`,
         },
-        credentials: "include",
         body: JSON.stringify(bookingPayload),
       });
 
@@ -59,9 +68,12 @@ const BookingForm = ({
         router.push("/my-bookings");
         router.refresh();
       } else {
-        toast.error("Failed to secure reservation.");
+        const errorData = await res.json().catch(() => null);
+
+        toast.error(errorData?.message || "Failed to secure reservation.");
       }
     } catch (error) {
+      console.error(error);
       toast.error("Network error. Please try again.");
     }
   };

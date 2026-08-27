@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import {
   Button,
   Card,
@@ -11,53 +12,60 @@ import {
   TextField,
   Select,
 } from "@heroui/react";
-import { useState } from "react";
+
 import toast from "react-hot-toast";
 
 const AddCarForm = ({ user }) => {
-  const [carType, setCarType] = useState("Sedan");
-  const [availability, setAvailability] = useState("Available");
-
   const onSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
     const carData = Object.fromEntries(formData.entries());
 
-    carData.dailyRentPrice = Number(carData.dailyRentPrice);
-    carData.seatCapacity = Number(carData.seatCapacity);
-
-    carData.carType = String(carType);
-    carData.availability = String(availability);
     carData.ownerId = user?.id;
     carData.ownerEmail = user?.email;
 
     console.log(carData);
 
-    const res = await fetch("http://localhost:5000/car", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(carData),
-    });
+    try {
+      const { data: tokenData, error } = await authClient.token();
 
-    const data = await res.json();
-    if (res.ok) {
-      toast.success("Car successfully added");
-      e.target.reset();
-      setCarType("Sedan");
-      setAvailability("Available");
-    } else {
+      if (error || !tokenData?.token) {
+        toast.error("Authentication token not found. Please login again.");
+        return;
+      }
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/car`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${tokenData.token}`,
+        },
+        body: JSON.stringify(carData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success("Car successfully added");
+        e.target.reset();
+      
+      } else {
+        toast.error(data?.message || "Failed to add car");
+      }
+
+      console.log(data);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to add car");
     }
-    console.log(data);
   };
 
   return (
     <Card className="bg-neutral-900 border border-neutral-800 w-full rounded-xl">
       <form onSubmit={onSubmit} className="p-8 md:p-10 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Vehicle Name */}
           <div className="md:col-span-2">
             <TextField name="carName" isRequired>
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
@@ -71,13 +79,12 @@ const AddCarForm = ({ user }) => {
             </TextField>
           </div>
 
+          {/* Vehicle Type (Select) */}
           <div className="flex flex-col">
             <Select
               name="carType"
               isRequired
               className="w-full"
-              selectedKey={carType}
-              onSelectionChange={(selected) => setCarType(selected)}
               placeholder="Select vehicle type"
             >
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider mb-1">
@@ -129,13 +136,12 @@ const AddCarForm = ({ user }) => {
             </Select>
           </div>
 
+          {/* Availability Status (Select) */}
           <div className="flex flex-col">
             <Select
               name="availability"
               isRequired
               className="w-full"
-              selectedKey={availability}
-              onSelectionChange={(selected) => setAvailability(selected)}
               placeholder="Select status"
             >
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider mb-1">
@@ -166,6 +172,7 @@ const AddCarForm = ({ user }) => {
             </Select>
           </div>
 
+          {/* Rental Rate */}
           <TextField name="dailyRentPrice" type="number" isRequired>
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
               Daily Rental Rate (Taka)
@@ -178,6 +185,7 @@ const AddCarForm = ({ user }) => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
+          {/* Seat Capacity */}
           <TextField name="seatCapacity" type="number" isRequired>
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
               Seat Capacity
@@ -190,6 +198,7 @@ const AddCarForm = ({ user }) => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
+          {/* Pickup Location */}
           <TextField name="pickupLocation" isRequired>
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
               Pickup Location / City
@@ -201,6 +210,7 @@ const AddCarForm = ({ user }) => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
+          {/* Image URL */}
           <div className="md:col-span-2">
             <TextField name="image" isRequired>
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
@@ -215,6 +225,7 @@ const AddCarForm = ({ user }) => {
             </TextField>
           </div>
 
+          {/* Description */}
           <div className="md:col-span-2">
             <TextField name="description" isRequired>
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">

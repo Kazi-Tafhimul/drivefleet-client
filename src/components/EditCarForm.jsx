@@ -1,4 +1,5 @@
 "use client";
+import { authClient } from "@/lib/auth-client";
 import { FloppyDisk } from "@gravity-ui/icons";
 import {
   Button,
@@ -27,20 +28,42 @@ const EditCarForm = ({ car, id }) => {
       pickupLocation: formData.get("pickupLocation"),
       description: formData.get("description"),
     };
-    const res = await fetch(`http://localhost:5000/car/${id}`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(updatedData),
-    });
-    if (res) {
-      toast.success("Data updated successfully");
-      router.push("/my-car");
-      router.refresh();
-    } else {
-      toast.error("Failed to update the data");
+    try {
+      const { data, error } = await authClient.token();
+
+      if (error || !data?.token) {
+        toast.error("Authentication token not found. Please login again.");
+        router.push("/login");
+        return;
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/car/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${data.token}`,
+          },
+          body: JSON.stringify(updatedData),
+        },
+      );
+
+      const result = await res.json();
+
+      if (res.ok) {
+        toast.success("Data updated successfully");
+        router.push("/my-car");
+        router.refresh();
+      } else {
+        toast.error(result?.message || "Failed to update the data");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
     }
   };
+
   return (
     <Form
       onSubmit={handleUpdate}
@@ -97,13 +120,13 @@ const EditCarForm = ({ car, id }) => {
             </label>
             <select
               name="availability"
-              defaultValue={car.availability || "available"}
+              defaultValue={car.availability || "Available"}
               className="w-full h-10 bg-neutral-950 p-2 rounded-md border border-neutral-800 text-sm focus:border-orange-500 outline-none text-white cursor-pointer"
             >
-              <option value="available" className="bg-neutral-900">
+              <option value="Available" className="bg-neutral-900">
                 Available
               </option>
-              <option value="unavailable" className="bg-neutral-900">
+              <option value="Unavailable" className="bg-neutral-900">
                 Unavailable
               </option>
             </select>

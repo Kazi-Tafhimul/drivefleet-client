@@ -1,24 +1,23 @@
-import BookingForm from '@/components/BookingForm';
-import { auth } from '@/lib/auth';
-import { Button, Card } from '@heroui/react';
-import { headers } from 'next/headers';
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
-import { CiLocationOn } from 'react-icons/ci';
-import { FaArrowLeft } from 'react-icons/fa';
-import { GiCarSeat } from 'react-icons/gi';
-import { TbCoinTaka } from 'react-icons/tb';
+import BookingForm from "@/components/BookingForm";
+import { auth } from "@/lib/auth";
+import { Button, Card } from "@heroui/react";
+import { headers } from "next/headers";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { CiLocationOn } from "react-icons/ci";
+import { FaArrowLeft } from "react-icons/fa";
+import { GiCarSeat } from "react-icons/gi";
+import { TbCoinTaka } from "react-icons/tb";
 
 const CarDetailsPage = async ({ params }) => {
   const { id } = await params;
 
- 
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  const res = await fetch(`http://localhost:5000/car/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/car/${id}`, {
     cache: "no-store",
   });
   const car = await res.json();
@@ -102,7 +101,7 @@ const CarDetailsPage = async ({ params }) => {
               <div className="flex items-center gap-2">
                 <span
                   className={`w-2.5 h-2.5 rounded-full ${
-                    car.availability === "available"
+                    car.availability === "Available"
                       ? "bg-emerald-500 shadow-[0_0_10px_#10b981]"
                       : "bg-red-500"
                   }`}
@@ -120,17 +119,18 @@ const CarDetailsPage = async ({ params }) => {
               </div>
             </div>
 
-            {car.availability !== "unavailable" ? (
+            {car.availability === "Unavailable" ? (
+              <div className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-500 font-bold uppercase tracking-widest">
+                Vehicle Currently Unavailable
+              </div>
+            ) : (
               <BookingForm
                 carId={car._id}
                 carName={car.carName}
                 dailyRentPrice={car.dailyRentPrice}
-                userEmail={session?.user?.email} 
+                userEmail={session?.user?.email}
+                availability={car.availability}
               />
-            ) : (
-              <div className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-4 text-center text-xs text-neutral-500 font-bold uppercase tracking-widest py-4">
-                Vehicle Currently Reserved
-              </div>
             )}
           </div>
         </div>

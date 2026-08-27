@@ -1,28 +1,64 @@
 "use client";
+
 import { TrashBin } from "@gravity-ui/icons";
 import { AlertDialog, Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 const DeleteButton = ({ _id, carName }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const handleDelete = async () => {
-    const res = await fetch(`http://localhost:5000/car/${_id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    if (res) {
-      toast.success("Vehicle permanently removed.");
-      router.refresh();
-    } else {
-      toast.error("Failed to delete.");
+    setLoading(true);
+
+    try {
+      // Get authentication token
+      const { data, error } = await authClient.token();
+
+      if (error || !data?.token) {
+        toast.error("Authentication token not found. Please login again.");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/car/${_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${data.token}`,
+          },
+        }
+      );
+
+      const result = await res.json();
+
+      if (res.ok) {
+        toast.success("Vehicle permanently removed.");
+        router.refresh();
+      } else {
+        toast.error(result?.message || "Failed to delete.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <AlertDialog>
       <AlertDialog.Trigger>
-        <button className="bg-red-950/40 text-red-400 text-xs px-4 py-2 rounded-md hover:bg-red-900/40 transition-colors h-9 font-semibold flex items-center gap-1.5">
-          <TrashBin className="size-3.5" /> Delete
+        <button
+          className="bg-red-950/40 text-red-400 text-xs px-4 py-2 rounded-md hover:bg-red-900/40 transition-colors h-9 font-semibold flex items-center gap-1.5"
+        >
+          <TrashBin className="size-3.5" />
+          Delete
         </button>
       </AlertDialog.Trigger>
 
@@ -38,6 +74,7 @@ const DeleteButton = ({ _id, carName }) => {
               >
                 <TrashBin className="size-5" />
               </AlertDialog.Icon>
+
               <AlertDialog.Heading className="text-lg font-bold text-white">
                 Delete Listing?
               </AlertDialog.Heading>
@@ -54,16 +91,19 @@ const DeleteButton = ({ _id, carName }) => {
             <AlertDialog.Footer className="flex gap-2 justify-end pt-4">
               <Button
                 slot="close"
+                isDisabled={loading}
                 className="bg-neutral-800 text-neutral-300 hover:bg-neutral-700 text-xs font-semibold px-4 py-2 rounded-md"
               >
                 Cancel
               </Button>
+
               <Button
                 slot="close"
+                isDisabled={loading}
                 onClick={handleDelete}
                 className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-md"
               >
-                Confirm Delete
+                {loading ? "Deleting..." : "Confirm Delete"}
               </Button>
             </AlertDialog.Footer>
           </AlertDialog.Dialog>
