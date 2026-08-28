@@ -15,7 +15,7 @@ const DeleteButton = ({ _id, carName }) => {
     setLoading(true);
 
     try {
-      // Get authentication token
+      
       const { data, error } = await authClient.token();
 
       if (error || !data?.token) {

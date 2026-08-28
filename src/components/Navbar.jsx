@@ -44,18 +44,13 @@ const Navbar = () => {
         <li>
           <Link
             href="/"
-            className="px-4 py-2 rounded-md text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
+            className="px-2 sm:px-4 rounded-md text-[11px] sm:text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
           >
             Home
           </Link>
         </li>
         <li>
-          <Link
-            href="/explore"
-            className="px-4 py-2 rounded-md text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block"
-          >
-            Explore Cars
-          </Link>
+          <Link href="/explore" className="px-2 sm:px-4 py-2 rounded-md text-[11px] sm:text-sm font-medium text-neutral-300 hover:text-white hover:bg-orange-600 transition-all duration-300 ease-in-out block whitespace-nowrap" > <span className="sm:hidden">Explore</span> <span className="hidden sm:inline">Explore Cars</span> </Link>
         </li>
       </ul>
 
@@ -86,7 +81,7 @@ const Navbar = () => {
 
            
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-3 w-56 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl py-2 text-white">
+              <div className="absolute right-0 mt-3 w-[calc(100vw-1.5rem)] max-w-56 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl py-2 text-white">
                 <div className="px-4 py-2 border-b border-neutral-800 mb-1">
                   <p className="text-sm font-semibold text-white truncate">
                     {session.user?.name || "User"}

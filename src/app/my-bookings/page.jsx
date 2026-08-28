@@ -33,7 +33,7 @@ const MyBookingsPage = async () => {
     <div className="w-full bg-neutral-950 min-h-screen text-white py-12 px-4 md:px-12">
       <div className="max-w-5xl mx-auto space-y-8">
 
-        {/* Header */}
+       
         <div>
           <h1 className="text-2xl font-bold tracking-wider uppercase">
             My Active{" "}
@@ -46,7 +46,7 @@ const MyBookingsPage = async () => {
           </p>
         </div>
 
-        {/* Bookings */}
+      
         {bookings.length === 0 ? (
           <div className="border border-dashed border-neutral-800 rounded-xl p-16 text-center text-neutral-500 text-sm">
             You have not reserved any fleet assets yet.

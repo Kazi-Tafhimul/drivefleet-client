@@ -65,7 +65,7 @@ const AddCarForm = ({ user }) => {
     <Card className="bg-neutral-900 border border-neutral-800 w-full rounded-xl">
       <form onSubmit={onSubmit} className="p-8 md:p-10 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Vehicle Name */}
+        
           <div className="md:col-span-2">
             <TextField name="carName" isRequired>
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
@@ -79,7 +79,7 @@ const AddCarForm = ({ user }) => {
             </TextField>
           </div>
 
-          {/* Vehicle Type (Select) */}
+          
           <div className="flex flex-col">
             <Select
               name="carType"
@@ -136,7 +136,7 @@ const AddCarForm = ({ user }) => {
             </Select>
           </div>
 
-          {/* Availability Status (Select) */}
+          
           <div className="flex flex-col">
             <Select
               name="availability"
@@ -172,7 +172,7 @@ const AddCarForm = ({ user }) => {
             </Select>
           </div>
 
-          {/* Rental Rate */}
+        
           <TextField name="dailyRentPrice" type="number" isRequired>
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
               Daily Rental Rate (Taka)
@@ -185,7 +185,7 @@ const AddCarForm = ({ user }) => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          {/* Seat Capacity */}
+         
           <TextField name="seatCapacity" type="number" isRequired>
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
               Seat Capacity
@@ -198,7 +198,7 @@ const AddCarForm = ({ user }) => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          {/* Pickup Location */}
+         
           <TextField name="pickupLocation" isRequired>
             <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
               Pickup Location / City
@@ -210,7 +210,7 @@ const AddCarForm = ({ user }) => {
             <FieldError className="text-xs text-red-500 mt-1" />
           </TextField>
 
-          {/* Image URL */}
+          
           <div className="md:col-span-2">
             <TextField name="image" isRequired>
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
@@ -225,7 +225,7 @@ const AddCarForm = ({ user }) => {
             </TextField>
           </div>
 
-          {/* Description */}
+          
           <div className="md:col-span-2">
             <TextField name="description" isRequired>
               <Label className="text-xs text-neutral-400 font-bold uppercase tracking-wider">
